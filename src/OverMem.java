@@ -16,14 +16,13 @@ public class OverMem {
     private ArrayList<String> mylist = new ArrayList<String>();
 
     public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
-
-      
       String line = value.toString();
       StringTokenizer tokenizer = new StringTokenizer(line);
       while (tokenizer.hasMoreTokens()) {
-        word.set(tokenizer.nextToken());
-        mylist.add(tokenizer.nextToken());
-	output.collect(word, one);
+        String w = tokenizer.nextToken();
+        word.set(w);
+        mylist.add(w);
+	    output.collect(word, one);
       }
       mylist.addAll(mylist);
     }
