@@ -93,6 +93,7 @@ public class GangliaSink32 extends GangliaSink31 {
 
             GangliaConf gConf = getGangliaConfForMetric(name);
             gConf.setDmax(60);
+            gConf.setTmax(10);
             calculatedSlope = calculateSlope(gConf, slopeFromMetric);
 
             // send metric to Ganglia
