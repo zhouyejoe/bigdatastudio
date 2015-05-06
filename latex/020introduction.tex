@@ -1,0 +1,35 @@
+Google MapReduce as well as its open-source version Hadoop provide a simple yet efficient way to handle large- scale data processing based on commodity machines.
+Over the years, Hadoop has become the de-facto benchmark\cite{hayashibara2004varphi} where users ”have instantaneous and almost unrestricted access to vast amounts of computational resources”.
+Among various design features of this framework, its simple data processing model and ease-of-use allowing even naive users who are not aware of the underlying infrastructure are able to develop programs, and this might result in "implicit" problems.
+\par
+The reason these problems are "implicit" is because that users ignoring them will still get their MapReduce programs running and obtain final results, but during this process, many tasks may be rescheduled and restarted due to memory failures. 
+For example, in the Linux environment TaskTrackers monitor tasks based on the following two conditions:  1) The memory usage of a specific task; 2) The total amount of memory usage of multiple tasks. 
+\par
+In the former situation, a task is killed and rescheduled by the TaskTracker if it fails either of the following two criteria:
+i. Anytime when the current memory usage of a task exceeds two times of the value specified by {\bf mapred.cluster.max.map.memory.mb};
+ii. The current memory usage of a task exceeds the value specified by {\bf mapred.cluster.max.map.memory.mb} for two consecutive periods of time (default is 5s). 
+The first criteria considers the operation of fork(), which results in duplicated memory usages; the second criteria is applied to avoid the appearance of stragglers.
+In the latter situation, tasks are killed by the TaskTracker if the following criteria is satisfied:
+\begin{equation}
+{\emph memInUsage} > {\emph maxMemAllowedForAllTasks} 
+\end{equation}
+where \emph {memInUsage} denotes the total memory in use of all the tasks scheduled by a specific TaskTracker and \emph {maxMemAllowedForAllTasks} denotes the total amount of memory allocated to it. The latter parameter can be calculated as following:
+\begin{equation*}
+\begin{aligned}
+&{\emph maxMemAllowedForAllTasks} = \\
+& \hspace {5pt} {\emph maxCurrMapTasks} \times {\emph mapSlotMemSizeOnTT} + \\
+& \hspace {5pt} {\emph maxCurrReduceTasks} \times {\emph reduceSlotSizeMemOnTT}
+\end{aligned}
+\end{equation*}
+In the above equation, \emph {maxCurrMapTasks} (specified by {\bf mapred.tasktracker.map.tasks.maximum} in the code) denotes the number of map slots allocated to that TaskTracker and \emph {mapSlotMemSizeOnTT}, which is specified by {\bf mapred.cluster.map.memory.mb}, denotes the memory size of a map slot. 
+For reduce tasks, the situations are similar except that the parameters applied are different.
+All tasks are killed by TaskTracker in the reverse order of scheduled time, \emph{i.e.}, recent tasks are killed until equation (1) fails. 
+\par
+The above example is a common scenario where memory failures might occur, and Hadoop simply reschedules the failed tasks until they successfully finish, which results in delay in job processing and inappropriate memory usages.
+However, this problem can be fixed through parameter tuning in the configuration file provided to the users which is generally ignored.
+We address this problem by providing parameter tuning recommendation to users directly, but this brings three considerations. 
+\par
+
+In the following part of this writing, detailed summaries on data models, architectures and features of specific types of databases are given. Key-Value storage is described in chapter 2 with Redis as the example; Column Family is described in chapter 3 with Cassandra and HBase as the example; Documents type including MongoDB and DocumentDB is described in chapter 4. Chapter 5 provides an evaluation on the systems with comparison on different applications, and based on which it reasons scenarios that are uniquely suitable for NoSQL.Chapter 6 gives the conclusion.
+
+
