@@ -1,3 +1,5 @@
+package pagerank;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -10,14 +12,13 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -32,7 +33,7 @@ public class WordCountThreshold extends Configured implements Tool {
 	 * Maps each line and output the filter result with data format needed
 	 */
 	public static class WordCountMapper extends
-			Mapper<LongWritable, Text, Text, IntWritable> {
+			Mapper<Text, Text, Text, IntWritable> {
 		private double threshold;
 		private double randomValue;
 		private int sawFlag;
@@ -42,22 +43,20 @@ public class WordCountThreshold extends Configured implements Tool {
 		@Override
 		public void setup(Context context) {
 			wordList = new ArrayList<String>();
-			threshold = context.getConfiguration().getInt(THRESHOLD, 512)
+			threshold = context.getConfiguration().getDouble(THRESHOLD, 512)
 					* MB;
-			randomValue = context.getConfiguration().getInt(RANDOM, 1);
+			randomValue = context.getConfiguration().getDouble(RANDOM, 1);
 			sawFlag = context.getConfiguration().getInt(SAW, 0);
 			if (randomValue != 1.0) {
 				randomValue = Math.random();
 			}
 			threshold = threshold * randomValue;
-            System.out.println("threshold is " + threshold);
 			memoryMXBean = ManagementFactory.getMemoryMXBean();
 		}
 
 		@Override
-		public void map(LongWritable key, Text value, Context context)
+		public void map(Text key, Text value, Context context)
 				throws IOException, InterruptedException {
-            //Thread.sleep(2);
 			MemoryUsage memHeap = memoryMXBean.getHeapMemoryUsage();
 			if (memHeap.getUsed() < threshold) {
 				String line = value.toString();
@@ -76,13 +75,14 @@ public class WordCountThreshold extends Configured implements Tool {
 
 	@Override
 	public int run(String[] args) throws Exception {
-		if (args.length != 5) {
-			System.err.println("Usage: PrePageRank <in> <threshold> <random> <saw> <out>");
+		if (args.length != 3) {
+			System.err
+					.println("Usage: PrePageRank <in> <threshold> <random> <saw>");
 			return 0;
 		}
 		Configuration conf = new Configuration();
-		conf.setInt(THRESHOLD, Integer.parseInt(args[1]));
-		conf.setInt(RANDOM, Integer.parseInt(args[2]));
+		conf.setDouble(THRESHOLD, Double.parseDouble(args[1]));
+		conf.setDouble(RANDOM, Double.parseDouble(args[2]));
 		conf.setInt(SAW, Integer.parseInt(args[3]));
 		@SuppressWarnings("deprecation")
 		Job job = new Job(conf, "WordCount");
@@ -93,7 +93,7 @@ public class WordCountThreshold extends Configured implements Tool {
 		job.setMapOutputValueClass(IntWritable.class);
 		job.setReducerClass(Reducer.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[4]));
+		FileOutputFormat.setOutputPath(job, new Path(args[5]));
 		boolean result = job.waitForCompletion(true);
 		return (result ? 0 : 1);
 	}
