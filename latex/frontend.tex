@@ -1,5 +1,7 @@
 We designed the frontend, called as Memmetric, in two aspects: \textbf{real-time monitor} and \textbf{historical monitor}. Real-time monitor  presents users the current status of the clusters. Historical monitor records anomalous data points to hint users debug their cluster.
 
+\subsection{Real-time Monitor}
+
 \begin{figure}[h!]
   \caption{Real-time Monitor}
   \centering
@@ -9,6 +11,8 @@ We designed the frontend, called as Memmetric, in two aspects: \textbf{real-time
 Real-time monitor shows per-machine view of task heap memory usage, the number of running map tasks and reduce tasks. Each line in "Memory Usage" block shows the total heap memory usage in a machine. Also, lines in "Map Running Tasks" and "Reduce Running Tasks" show the number of map an reduce tasks in different machines.
 
 Hadoop cluster reports the memory usage for each task to Ganglia. However, plotting the memory usage of all tasks individually on the same chart can be hard to understand, because a Hadoop job may spawn hundreds of tasks. Therefore, Memmetric aggregates all per-task heap memory usage on a machine into a per-machine heap memory usage line. Also, Memmetric shows the number of running map tasks and reduce tasks. Real-time monitor provides a clue whether there are tasks killed due to over memory usage. If there is a sharp drop of heap memory usage on machine, it is possible that some tasks use too many memory to be killed by JVM or operating system. 
+
+\subsection{Historical Monitor}
 
 \begin{figure}[h!]
   \caption{Historical Monitor and Parameter Settings}
