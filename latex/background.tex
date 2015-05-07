@@ -59,7 +59,7 @@ Ambri adopts Ganglia to collect metrics and Nagios to support the alert system, 
 For the purpose of integrating with existing administration tools, Ambri exposes the monitoring metrics through RESTful API.
 \par
 White Elephant\cite{http://data.linkedin.com/opensource/white-elephant}, developed by LinkedIn, is an open sourced Hadoop log aggregating tool and dashboard which enables visualization of Hadoop cluster utilization across users. 
-White Elephant runs a daemon on each node in the cluster to periodically collect the log data, then it runs a sequence of MapReduce jobs to compute aggregate statistics. In the end, White Elephant applies a viewer application to display the metrics collected with dashboard.
+White Elephant runs a daemon on each node in the cluster to periodically collect the log data, then it runs a sequence of MapReduce jobs to compute aggregate statistics. In the end, White Elephant applies a viewer application to display the metrics with dashboard. test
 \par
 The difference between our system and Chukwa and White Elephant is that we use real-time metrics collected from Ganglia instead of the logs in each node.
 Unlike Cloudera Manager, Ambri, and White Elephant which provide a general monitoring system, our system focuses on memory by providing fine-grained monitoring on task level and event detection for memory usages.
