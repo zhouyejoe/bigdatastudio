@@ -1,9 +1,53 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{boulon2008chukwa}
+Jerome Boulon, Andy Konwinski, Runping Qi, Ariel Rabkin, Eric Yang, and Mac
+  Yang.
+\newblock Chukwa, a large-scale monitoring system.
+\newblock In {\em Proceedings of CCA}, volume~8, pages 1--5, 2008.
 
 \bibitem{hayashibara2004varphi}
 Naohiro Hayashibara, Xavier Defago, Rami Yared, and Takuya Katayama.
 \newblock The $\varphi$ accrual failure detector.
 \newblock In {\em Reliable Distributed Systems, 2004. Proceedings of the 23rd
   IEEE International Symposium on}, pages 66--78. IEEE, 2004.
+
+\bibitem{http://data.linkedin.com/opensource/white-elephant}
+http://data.linkedin.com/opensource/white elephant.
+\newblock Hadoop usage dashboard, 2012.
+
+\bibitem{http://grafana.org}
+http://grafana.org.
+\newblock An open source, feature rich metrics dashboard and graph editor for
+  graphite, influxdb \& opentsdb., 2013.
+
+\bibitem{http://hortonworks.com/hadoop/ambari}
+http://hortonworks.com/hadoop/ambari.
+\newblock A framework for provisioning, managing and monitoring apache hadoop
+  clusters, 2013.
+
+\bibitem{http://influxdb.com}
+http://influxdb.com.
+\newblock An open-source, distributed, time series database with no external
+  dependencies., 2014.
+
+\bibitem{http://sequenceiq.com}
+http://sequenceiq.com.
+\newblock Self service hadoop platform - anywhere., 2014.
+
+\bibitem{http://www.cloudera.com}
+http://www.cloudera.com.
+\newblock End-to-end administration for hadoop, 2011.
+
+\bibitem{josephsen2007building}
+David Josephsen.
+\newblock {\em Building a monitoring infrastructure with Nagios}.
+\newblock Prentice Hall PTR, 2007.
+
+\bibitem{massie2004ganglia}
+Matthew~L Massie, Brent~N Chun, and David~E Culler.
+\newblock The ganglia distributed monitoring system: design, implementation,
+  and experience.
+\newblock {\em Parallel Computing}, 30(7):817--840, 2004.
 
 \end{thebibliography}
