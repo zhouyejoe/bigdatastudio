@@ -1,11 +1,11 @@
 \begin{figure*}[ht]
   \centering
     \includegraphics[width=4.0in]{image/architecture.png}
-    \label{ref-architecture}
     \caption{System Architecture}
+    \label{ref:architecture}
 \end{figure*}
 
-Figure \ref{ref-architecture} shows our system design. It contains three main components: \textbf{Metric gathering}, \textbf{Hadoop metric system}, and \textbf{Frontend}. We used Ganglia as the infrastructure to gather the  Hadoop cluster metrics in real-time. Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, they will be organized and visualized to users by our frontend system: Memmetric.
+Figure \ref{ref:architecture} shows our system design. It contains three main components: \textbf{Metric gathering}, \textbf{Hadoop metric system}, and \textbf{Frontend}. We used Ganglia as the infrastructure to gather the  Hadoop cluster metrics in real-time. Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, they will be organized and visualized to users by our frontend system: Memmetric.
 
 \subsection{Metric Gathering}
 
@@ -25,13 +25,13 @@ We added a filter inside the Ganglia API server to clean out the metrics of fini
 
 \subsection{Hadoop Metric System}
 
-Hadoop 1.2.1 already provides metric system to gather different metrics source (e.g., Java Virtual Machine (JVM) metrics, Remote Procedure Call metrics) in Hadoop cluster and send them to the assigned destination (e.g., files or Ganglia daemon), shown in Figure \ref{figure-metric2}.
+Hadoop 1.2.1 already provides metric system to gather different metrics source (e.g., Java Virtual Machine (JVM) metrics, Remote Procedure Call metrics) in Hadoop cluster and send them to the assigned destination (e.g., files or Ganglia daemon), shown in Figure \ref{fig:metric2}.
 
 \begin{figure}[h!]
   \centering
     \includegraphics[width=0.5\textwidth]{image/ganglia32}
-    \label{figure-metric2}
   \caption{Metric System in Hadoop (Metric2)}
+  \label{fig:metric2}
 \end{figure}
 
 In our system, we connected "JVM metrics" to metric system, and assigned them sending to Ganglia by GangliaSink. Therefore, Ganglia can receive task level memory usage information from Hadoop metric system.
@@ -40,7 +40,7 @@ We found that the default connector between metric system and Ganglia (GangliaSi
 
 \subsubsection{Revised GangliaSink: GangliaSink32}
 
-Each JVM in Hadoop cluster periodically reports it memory usage information into metric system as a key-value pair. The key format is jvm.metric.\{tag\}.heapMemoryUsedM. For example, jvm.metric.jvm\_20140405\_0001\_m\_1234.heapMemoryUsedM means the heap memory usage of the map task for Hadoop job 20140405\_0001. 
+Each JVM in Hadoop cluster periodically reports it memory usage information into metric system as a key-value pair. The key format is jvm.metric.\{tag\}.heapMemoryUsedM. For example, jvm.metric.jvm\_20140405\_1\_m\_1234.heapMemoryUsedM means the heap memory usage of the map task for Hadoop job 20140405\_1. 
 
 
 However, the original connector between metric system and Ganglia, GangliaSink31.java, will discard the tag of the reported metric key. For example, jvm.metric.jvm\_20140405\_0001\_m\_1234.heapMemoryUsedM will become jvm.metric.heapMemoryUsedM. 
