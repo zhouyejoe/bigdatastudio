@@ -5,15 +5,15 @@
     \label{ref:architecture}
 \end{figure*}
 
-Figure \ref{ref:architecture} shows our system design. It contains three main components: \textbf{Metric gathering}, \textbf{Hadoop metric system}, and \textbf{Frontend}. We used Ganglia as the infrastructure to gather the  Hadoop cluster metrics in real-time. Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, they will be organized and visualized to users by our frontend system: Memmetric.
+Figure \ref{ref:architecture} shows our system design. It contains three main components: \textbf{Ganglia}, \textbf{Hadoop metric system}, and \textbf{Memmetric}. We used Ganglia 3.6.0 as the infrastructure to gather the  Hadoop cluster metrics in real-time. Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, they will be organized and visualized to users by our frontend system: Memmetric.
 
-\subsection{Metric Gathering}
+\subsection{Ganglia}
 
 Ganglia deploys daemons on each node, called as gmond. Gmond in a worker node is responsible to collect monitoring statistics of a machine (e.g., CPU load, memory usage, disk load), and report those metrics to the gmond on the server node. 
 
 Other programs also can send its metrics to the gmond in the same machine, and then the metrics will be aggregated by Ganglia system. In our system, we set Hadoop cluster to send Java Virtual Machine (JVM) metric, which includes task level memory usage information to gmond.
 
-Gmetad polls the metrics from the gmond on the server node, and stores the information into round robin database (rrd) periodically. 
+Gmetad polls the metrics from the gmond on the server node, and stores the information into round robin database (rrd) periodically. Besides, Ganglia periodically compass old metric values in rrd, which can prevent rrd waste too much disk space to store less used old metric values.
 
 Ganglia provides a web interface called ganglia-web, which can plots the metrics in rrds in the form of charts or json. 
 
@@ -28,7 +28,7 @@ We used ganglia-web as API server. Our frontend system queries ganglia-web for t
     \label{ref:gangliah_bug}
 \end{figure}
 
-We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM) has finished at 22:29, but the metric value is not set to zero.
+We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. There should be only four map tasks running after 22:35 because we set two map task slots for a machine, but there are six lines of memory usage. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM) has finished at 22:29, but the metric value is not set to zero.
 
 It makes the reported memory usage in a machine incredible large because the finished task memory usages are all counted into the sum of memory usage, which makes the sum unreasonably high. 
 
