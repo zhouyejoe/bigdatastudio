@@ -28,9 +28,9 @@ We used ganglia-web as API server. Our frontend system queries ganglia-web for t
     \label{ref:gangliah_bug}
 \end{figure}
 
-We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. There should be only four map tasks running after 22:35 because we set two map task slots for a machine, but there are six lines of memory usage. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM) has finished at 22:29, but the metric value is not set to zero.
+We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. There should be only four map tasks running after 22:35 because we set two map task slots for a machine, but there are six lines of memory usage. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM, light blue line) has finished at 22:29, but the metric value is not set to zero.
 
-It makes the reported memory usage in a machine incredible large because the finished task memory usages are all counted into the sum of memory usage, which makes the sum unreasonably high. 
+It makes the reported memory usage in a machine unreasonably large because the finished task memory usages are all counted into the sum of memory usage.
 
 One solution is to set the discard time d\_max. When a metric is not reported to Ganglia over d\_max time, Ganglia will assume the metric is dead and discard it. However, the value of discarded metrics is not set as zero, but it becomes invisible from Ganglia web-interface, which means that our frontend cannot plot any metrics before d\_max and cannot provide history memory usage information to users. It becomes a dilemma: if d\_max is set to a small number, the finished task metric will be discarded and it will not be counted into the sum of memory usage, but it becomes invisible from the frontend. If d\_max is a large number, the finished task information can retain for longer time, but its value is not set to zero and confuses the sum of total memory usage.
 
@@ -63,7 +63,7 @@ However, the original connector between metric system and Ganglia, GangliaSink31
   \caption{GangliaSink31 removes the tag in the key of metric and cause ambiguity.}
 \end{figure}
 
-Removing the tag from the reported metric results in that the system cannot discriminate metrics from different running tasks. Therefore, the meaning of jvm.metric.heapMemoryUsedM becomes hard to explain, because we cannot know which target's memory usage does  jvm.metric.heapMemoryUsedM stands for. Also, the system cannot aggregate all task memory usage into a machine aspect memory usage, because they are all mixed in a metric. 
+Removing the tag results in that the system cannot discriminate metrics from different running tasks. Therefore, the meaning of jvm.metric.heapMemoryUsedM becomes hard to explain, because we cannot know which target's memory usage does  jvm.metric.heapMemoryUsedM stands for. Also, the system cannot aggregate all task memory usage into a machine aspect memory usage, because they are all mixed in a metric. 
 
 To solve this problem, we developed GangliaSink32.java to replace GangliaSink31.java. GangliaSink32.java can retain the tag of the metric key. Therefore, Ganglia can separate the memory usage information among different processes. 
 
@@ -72,6 +72,11 @@ To solve this problem, we developed GangliaSink32.java to replace GangliaSink31.
   \includegraphics[width=0.5\textwidth]{image/ganglia32_flow.png}
   \caption{GangliaSink32 retains the tag in the key of metric.}
 \end{figure}
+
+\subsubsection{Reporting Frequency}
+
+Ganglia can configure the reporting frequency of gmond.  In default, gmond reports in 10 seconds. However, some small map tasks can run in less than 10 seconds, which cannot be observed because it ends before gmond starts to collect memory usage metrics. 
+We assigned reporting frequency as 2 seconds to detect fast tasks.
 
 \subsection{Frontend: Memmetric}
 We designed our frontend system (Memmetric) in two parts: \textbf{real-time monitor} and \textbf{historical monitor}. Real-time monitor  presents users the current status of the clusters. Historical monitor records anomalous data points to hint users debug their cluster.
