@@ -11,6 +11,8 @@ Figure \ref{ref:architecture} shows our system design. It contains three main co
 
 Ganglia deploys daemons on each node, called as gmond. Gmond in a worker node is responsible to collect monitoring statistics of a machine (e.g., CPU load, memory usage, disk load), and report those metrics to the gmond on the server node. 
 
+Other programs also can send its metrics to the gmond in the same machine, and then the metrics will be aggregated by Ganglia system. In our system, we set Hadoop cluster to send Java Virtual Machine (JVM) metric, which includes task level memory usage information to gmond.
+
 Gmetad polls the metrics from the gmond on the server node, and stores the information into round robin database (rrd) periodically. 
 
 Ganglia provides a web interface called ganglia-web, which can plots the metrics in rrds in the form of charts or json. 
@@ -19,13 +21,24 @@ We used ganglia-web as API server. Our frontend system queries ganglia-web for t
 
 \subsubsection{Ganglia Filter}
 
-We found that Ganglia keeps to report finished task's metric as the last value it received. It makes the reported memory usage in a machine incredible large because the finished task memory usages are all counted into the sum of memory usage.
+\begin{figure}[ht]
+  \centering
+    \includegraphics[width=3.0in]{image/ganglia_finished_tasks.png}
+    \caption{Ganglia does not set the value of finished tasks as zero}
+    \label{ref:gangliah_bug}
+\end{figure}
 
-We added a filter inside the Ganglia API server to clean out the metrics of finished tasks. If one metric is continual reported as same value over tolerated period $T$, the filter will assume the task has finished, and remove the finished metric from reported API.
+We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM) has finished at 22:29, but the metric value is not set to zero.
+
+It makes the reported memory usage in a machine incredible large because the finished task memory usages are all counted into the sum of memory usage, which makes the sum unreasonably high. 
+
+One solution is to set the discard time d\_max. When a metric is not reported to Ganglia over d\_max time, Ganglia will assume the metric is dead and discard it. However, the value of discarded metrics is not set as zero, but it becomes invisible from Ganglia web-interface, which means that our frontend cannot plot any metrics before d\_max and cannot provide history memory usage information to users. It becomes a dilemma: if d\_max is set to a small number, the finished task metric will be discarded and it will not be counted into the sum of memory usage, but it becomes invisible from the frontend. If d\_max is a large number, the finished task information can retain for longer time, but its value is not set to zero and confuses the sum of total memory usage.
+
+Instead of modifying d\_max, we added a filter inside the Ganglia API server to clean the metrics of finished tasks. If one metric is continual reported as same value over a tolerated period $T$ from time t\_end, the filter will assume the task finishes at t\_end and set the value of the metric after t\_end. 
 
 \subsection{Hadoop Metric System}
 
-Hadoop 1.2.1 already provides metric system to gather different metrics source (e.g., Java Virtual Machine (JVM) metrics, Remote Procedure Call metrics) in Hadoop cluster and send them to the assigned destination (e.g., files or Ganglia daemon), shown in Figure \ref{fig:metric2}.
+Hadoop 1.2.1 already provides metric system to gather different metrics source (e.g., JVM metrics, Remote Procedure Call metrics) in Hadoop cluster and send them to the assigned destination (e.g., files or Ganglia daemon), shown in Figure \ref{fig:metric2}.
 
 \begin{figure}[h!]
   \centering
@@ -40,10 +53,9 @@ We found that the default connector between metric system and Ganglia (GangliaSi
 
 \subsubsection{Revised GangliaSink: GangliaSink32}
 
-Each JVM in Hadoop cluster periodically reports it memory usage information into metric system as a key-value pair. The key format is jvm.metric.\{tag\}.heapMemoryUsedM. For example, jvm.metric.jvm\_20140405\_1\_m\_1234.heapMemoryUsedM means the heap memory usage of the map task for Hadoop job 20140405\_1. 
+Each JVM in Hadoop cluster periodically reports it memory usage information into metric system as a key-value pair. The key format is jvm.metric.\{tag\}.heapMemoryUsedM. For example, jvm.metric.jvm\_20140405\_1\_m\_1.heapMemoryUsedM means the heap memory usage of the map task for Hadoop job 20140405\_1. 
 
-
-However, the original connector between metric system and Ganglia, GangliaSink31.java, will discard the tag of the reported metric key. For example, jvm.metric.jvm\_20140405\_0001\_m\_1234.heapMemoryUsedM will become jvm.metric.heapMemoryUsedM. 
+However, the original connector between metric system and Ganglia, GangliaSink31.java, will discard the tag of the reported metric key. For example, jvm.metric.jvm\_20140405\_0001\_m\_1.heapMemoryUsedM will become jvm.metric.heapMemoryUsedM. 
 
 \begin{figure}[h!]
   \centering
