@@ -2,15 +2,29 @@ Google MapReduce as well as its open-source version Hadoop provide a simple yet 
 Over the years, Hadoop has become the de-facto benchmark\cite{hayashibara2004varphi} where users ”have instantaneous and almost unrestricted access to vast amounts of computational resources”.
 Among various design features of this framework, its simple data processing model and ease-of-use allowing even naive users who are not aware of the underlying infrastructure are able to develop programs, and this might result in "implicit" problems.
 \par
-The reason these problems are "implicit" is because that users ignoring them will still get their MapReduce programs running and obtain final results, but during this process, many tasks may be rescheduled and restarted due to memory failures. 
-For example, in the Linux environment TaskTrackers monitor tasks based on the following two conditions:  1) The memory usage of a specific task; 2) The total amount of memory usage of multiple tasks. 
+The reason these problems are "implicit" is because that users ignoring them will still get their MapReduce programs running and obtain final results, but during this process, many tasks may be rescheduled and restarted due to memory failures which might render execution delay and memory wastes. 
+For example, in the Linux environment TaskTrackers monitor tasks based on the following two conditions:  1) The memory usage of a specific task; 2) The total amount of memory usage of multiple tasks. When either of these two conditions is unsatisfied, TaskTracker would kill the running tasks to release memory.
 \par
 
-The above example is a common scenario where memory failures might occur, and Hadoop simply reschedules the failed tasks until they successfully finish, which results in delay in job processing and inappropriate memory usages.
-However, this problem can be fixed through parameter tuning in the configuration file provided to the users which is generally ignored.
-We address this problem by providing parameter tuning recommendation to users directly, but this brings three considerations. 
+The above example is a common scenario where memory failures might occur, and the way that Hadoop handles such failures is simply rescheduling the failed tasks until they successfully finish or aborted, which results in delay in job processing and inappropriate memory usages.
+However, this problem can be fixed through parameter tuning in the configuration files provided to the users which is generally ignored, but this solution leads to a question: what parameters to tune and when should we do that? 
+This paper addresses the problem by describing the design and implementation of a real-time memory usage monitoring system with the display of specific parameters, therefore users can obtain the real-time memory usage behaviors of their MapReduce jobs.\reminder{to be added.}
 \par
+The main contributions include:
+\begin{itemize}
+	\setlength{\itemsep}{0pt}
+	 \setlength{\parskip}{0pt}
+	 \setlength{\parsep}{0pt}
+	\item
+		\emph{ Establishing the real-time monitoring system for task level memory usages for Hadoop 1.2.1.} We
+	\item
+		the second.
+	\item
+		the third.
+	\item
+		the fourth
+\end{itemize}
 
-In the following part of this writing, detailed summaries on data models, architectures and features of specific types of databases are given. Key-Value storage is described in chapter 2 with Redis as the example; Column Family is described in chapter 3 with Cassandra and HBase as the example; Documents type including MongoDB and DocumentDB is described in chapter 4. Chapter 5 provides an evaluation on the systems with comparison on different applications, and based on which it reasons scenarios that are uniquely suitable for NoSQL.Chapter 6 gives the conclusion.
+The rest of this paper is organized as follows. Section 2 covers detailed explanation of implicit bugs and background materials related to distributed monitoring systems. Section 3 describes the design and implementation of different components of Hadoop v 1.0 Memory Failure Debugger. Section 4 describes the experiments designed and 
 
 
