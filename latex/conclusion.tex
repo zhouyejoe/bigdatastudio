@@ -1,3 +1,7 @@
-We build a memory monitor system, Memmetric, for Hadoop 1.2.1 based on Ganglia 3.6.0, which provides users with both real-time and historical monitoring on memory usages to find implicit memory bugs in their Hadoop jobs and to revise their Hadoop cluster parameter settings, instead of merely modifying the codes.
+We build a memory monitor system, Memmetric, for Hadoop 1.2.1 based on Ganglia 3.6.0, which provides users with both real-time and historical monitoring on memory usages to find implicit memory bugs in their Hadoop jobs and to revise their Hadoop cluster parameter settings. 
 
-Besides, we also found that Ganglia is not suitable for task level monitoring perfectly. 
+We found that there is a bug in the connector (GangliaSink31.java) between Hadoop and Ganglia. We fixed it the bug in the new version connector (GangliaSink32.java) to make Ganglia can receive task level metric information.
+
+Besides, We also found that Ganglia is not suitable for task level monitoring inherently. We added Ganglia filter to remove finished job metrics to avoid duplicated memory usage accounting.
+
+Moreover, We design a set of workload Hadoop jobs to reproduce and study three different types of memory failures: Java Heap Size Failure, TaskMemoryManagerThread Failure, and Excessive Slots Failure. We found that Memmetric can observe Java Heap Size Failure and Excessive Slots Failure, but cannot see TaskMemoryManagerThread Failure, because Hadoop JVM metric does not report virtual memory usage.
