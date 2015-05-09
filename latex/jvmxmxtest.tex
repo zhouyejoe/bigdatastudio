@@ -9,7 +9,7 @@ We test with this setting of Hadoop with the customized wordcount described in s
     \label{ref:memory_allocation}
 \end{figure}
 
-In Figure 12, the tested memory behavior is "Same Threshold without Clearance". The X-axis shows the time, and the Y-axis shows the memory usage with unit MB. The green line and blue line shows the sum of heap memory usage for all the tasks running on one slave machine (currently 2 tasks). The threshold is set to 200MB just the same with the configuration in JVM parameters. We can see from the figure that each line will increase the heap memory usage in exponential speed and then suddenly drop down to zero. And then due to failure, hadoop will start to rerun the task again on another machine, and we can see the increasing again, and after the sum is about 350MB, they are killed by the JVM as exceeding the maximum usage of JVM XMX setting. Then failure happens again, and restart again. We can also find the maximum value of heap usage for single task on one machine from the table, which shows almost 175MB. The reason why it just gets the value of 175MB but not some value bigger than 200MB is the exponential way of increasing data in holding, as everytime the arraylist add itself which doubles the data. So When it under 200MB, it will suddenly use too much memory, and killed by JVM itself, during which the process doesn't send out any metrics.
+In Figure 13, the tested memory behavior is "Same Threshold without Clearance". The X-axis shows the time, and the Y-axis shows the memory usage with unit MB. The green line and blue line shows the sum of heap memory usage for all the tasks running on one slave machine (currently 2 tasks). The threshold is set to 200MB just the same with the configuration in JVM parameters. We can see from the figure that each line will increase the heap memory usage in exponential speed and then suddenly drop down to zero. And then due to failure, hadoop will start to rerun the task again on another machine, and we can see the increasing again, and after the sum is about 350MB, they are killed by the JVM as exceeding the maximum usage of JVM XMX setting. Then failure happens again, and restart again. We can also find the maximum value of heap usage for single task on one machine from the table, which shows almost 175MB. The reason why it just gets the value of 175MB but not some value bigger than 200MB is the exponential way of increasing data in holding, as everytime the arraylist add itself which doubles the data. So When it under 200MB, it will suddenly use too much memory, and killed by JVM itself, during which the process doesn't send out any metrics.
 
 \begin{figure}[ht]
   \centering
@@ -18,7 +18,7 @@ In Figure 12, the tested memory behavior is "Same Threshold without Clearance". 
     \label{ref:memory_allocation}
 \end{figure}
 
-In Figure 13, the tested memory behavior is "Random Threshold without Clearance". We can find the lines are a little bit different with what shows in Figure 12. Some of the tasks keeps running without failure. That's the reason when the tasks fail of memory failure, the task is restarted with a random value that may decrease a lot the memory threshold. In this case, the retried task will run successfully. Even though in the maximum usage table, we can find the maximum usage is also about 175MB, but that is just the usage when fail happens.
+In Figure 14, the tested memory behavior is "Random Threshold without Clearance". We can find the lines are a little bit different with what shows in Figure 13. Some of the tasks keeps running without failure. That's the reason when the tasks fail of memory failure, the task is restarted with a random value that may decrease a lot the memory threshold. In this case, the retried task will run successfully. Even though in the maximum usage table, we can find the maximum usage is also about 175MB, but that is just the usage when fail happens.
 
 \begin{figure}[ht]
   \centering
@@ -27,7 +27,7 @@ In Figure 13, the tested memory behavior is "Random Threshold without Clearance"
     \label{ref:memory_allocation}
 \end{figure}
 
-In Figure 14, the tested memory behavior is "Same Threshold with Clearance". We can find the tasks runs without any failure but much more unstable. As clearance will be triggered when the threshold is met. There are more big "Saws" in the graph.
+In Figure 15, the tested memory behavior is "Same Threshold with Clearance". We can find the tasks runs without any failure but much more unstable. As clearance will be triggered when the threshold is met. There are more big "Saws" in the graph.
 
 \begin{figure}[ht]
   \centering
@@ -36,4 +36,4 @@ In Figure 14, the tested memory behavior is "Same Threshold with Clearance". We 
     \label{ref:memory_allocation}
 \end{figure}
 
-In Figure 15, the tested memory behavior is "Random Threshold with Clearance". In this case, the random threshold is about 110 MB, and it is always cleared after reach the threshold. So the green line and blue line is almost flat.
+In Figure 16, the tested memory behavior is "Random Threshold with Clearance". In this case, the random threshold is about 110 MB, and it is always cleared after reach the threshold. So the green line and blue line is almost flat.
