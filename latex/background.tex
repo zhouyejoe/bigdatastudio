@@ -2,7 +2,7 @@
 In this paper, we study three cases of memory failures: Java heap size error, tasks killed by TaskMemoryManagerThread, and excessive slots.
 \subsubsection{Java Heap Size Failure}
 Without modifying the configuration files Hadoop would run with default setting where most memory-related parameters are set as -1, and in this case only the memory sizes of java virtual machines (JVM) limit the memory that tasks can consume.
-The JVM memory consists of three parts as displayed in figure\ref{ref:heap_structure}.
+The JVM memory consists of three parts as displayed in Figure\ref{ref:heap_structure}.
 \par
 \begin{figure}[ht]
   \centering
@@ -10,10 +10,10 @@ The JVM memory consists of three parts as displayed in figure\ref{ref:heap_struc
     \caption{Java virtual machine memory structure.}
     \label{ref:heap_structure}
 \end{figure}
-The Heap Memory part is the storage for Java objects, which occupies normally the largest part of JVM memory. The default Heap Memory size is 200 MB ({\bf -Xmx200m}) in Hadoop, by modifying this value can users specify memory space allocated to tasks.
+The Heap Memory is the storage for Java objects, which occupies normally the largest part of JVM memory. The default Heap Memory size is 200 MB ({\bf -Xmx200m}) in Hadoop, by modifying this value can users specify memory space allocated to tasks.
 In the runtime the total memory usage of the JVM may exceed the value specified in the command after "{\bf -Xmx}", this is because of the non-heap memory and other storage in JVM memory.
 The Non-Heap Memory  is created at the JVM startup and store structures such as runtime constants, method data, the code for methods and constructors, and interned Strings.
-The other part includes JVM code itself, JVM internal structures, loaded profiler agent code and data, etc, which normally occupies a small portion of total JVM memory. 
+There are also some other parts that might consume memory including JVM code itself, JVM internal structures, loaded profiler agent code and data, etc, which normally occupie a small portion of total JVM memory. 
 
 \subsubsection{TaskMemoryManagerThread}
 In addition to the execution of tasks, Hadoop also monitors these tasks and provides metrics reflecting their status for the purpose of rescheduling the killed ones.
@@ -38,8 +38,8 @@ In the above equation, \emph {maxCurrMapTasks} (specified by {\bf mapred.tasktra
 For reduce tasks, the situations are similar except that the parameters applied are different.
 All tasks are killed by TaskTracker in the reverse order of scheduled time, \emph{i.e.}, recent tasks are killed until equation (1) fails. 
 \subsubsection{Excessive Slots}
-There is another case when Hadoop jobs may encounter memory failures: the virtual memory allocation request is under the limit specified by JVM, but the total value exceeds the amount of actual physical memory in the machine.
-This case can happen due to inappropriate settings on the number of slots (default value is 2) allocated to the TaskTracker. Consider the case illustrated in \ref{ref:excessive_slots}
+There is another case when Hadoop jobs may encounter memory failures: the virtual memory allocation request is under the limit specified by JVM, but the total value exceeds the amount of actual physical memory in the machine where TaskTracker is running.
+This case can happen due to inappropriate settings on the number of slots (default value is 2) allocated to the TaskTracker. Consider the case illustrated in Figure \ref{ref:excessive_slots}.
 \begin{figure}[ht]
   \centering
     \includegraphics[width=2.1in]{image/excessive_Slots.png}
@@ -47,18 +47,18 @@ This case can happen due to inappropriate settings on the number of slots (defau
     \label{ref:excessive_slots}
 \end{figure}
 \par
-Suppose the physical memory space is 800 MB, the JVM heap size is 300 MB and one TaskTracker is allocated with 4 slots. Hadoop would run smoothly if the total used memory consumed in the four JVMS is under 800 MB, but once the total amount of memory consumed exceeds the physical memory space, error would occur and Hadoop would have to kill the running tasks to reduce the amount of memory occupied.
+Suppose the physical memory space is 800 MB, the JVM heap size is 300 MB and one TaskTracker is allocated with 4 slots. Hadoop would run smoothly if the total memory consumed in the four JVMs is under 800 MB, but once the total amount of memory consumed exceeds the physical memory space, errors would occur and Hadoop would have to kill the running tasks to reduce the amount of memory occupied, or just abort the whole process.
 \par
 With appropriate parameters tuning, users can better manage the memory consumed by tasks, and the JVM memory space can be fully utilized to avoid potential memory-related bugs existing in users' Hadoop programs.
 
 \subsection{Related Work}
-Even though Hadoop has its own monitoring system on each component, including website on JobTracker to check the running status of each MapReduce job and website on Namenode to check the usage of Hadoop File System (HDFS), the information posted on these pages is always not enough for either naive or experienced users.
+Even though Hadoop has its own monitoring system on each component, including the website on JobTracker to check the running status of each MapReduce job and the website on the Namenode to check the usage of Hadoop File System (HDFS), the information posted on these pages is always not enough for either naive or experienced users.
 For naive users, they merely get the log description showing the failed status of their jobs without specific reasons; For experienced users who need to know more about the whole pipeline performance information involved with a bunch of jobs, the default monitoring system is not enough either.
 With the popularity of complex pipeline MapReduce jobs, companies like LinkedIn, Hortonworks develop their own fine-grained monitor frameworks for Hadoop based on traditional monitoring frameworks for cluster nodes metrics.\par
-Ganglia\cite{massie2004ganglia}, developed from the project named Millennium in UC Berkeley, is a scalable distributed monitoring tool for high performance computing systems.
+Ganglia\cite{massie2004ganglia}, developed from the project named Millennium in UC Berkeley, is a scalable distributed monitoring tool for high performance computing systems, which naturally integrates with Hadoop.
 Ganglia follows the master/slave infrastructure, running a Ganglia monitoring daemon (Gmond) on each node in the cluster that needs to be monitored.
-Gmond collects metric information on this node such as metrics of CPU,memory, etc., and sends it to Ganglia Meta Daemon (Gmetad) running on the master monitoring node of the cluster via XML over TCP periodically.
-The Gmetad process runs on the master monitoring node (may not be the master of a cluster) collecting the metrics from distributed Gmond processes and Ganglia has its own default PHP web front end to show these metrics with dashboards.
+Gmond collects metric information on this node such as metrics of CPU,memory, etc, and sends it to Ganglia Meta Daemon (Gmetad) running on the master monitoring node of the cluster via XML over TCP periodically.
+The Gmetad process runs on the master monitoring node (may not be the master of a cluster) to collect the metrics from distributed Gmond processes and Ganglia has its own default PHP web front end to show these metrics with dashboards.
 %Gmond is a multi-threaded daemon which monitors changes in host state, announce the metrics data in Unicasting or Multicasting way. Hadoop has support of integration with Ganglia
 
 

@@ -1,6 +1,6 @@
-Google MapReduce as well as its open-source version Hadoop provide a simple yet efficient way to handle large- scale data processing based on commodity machines.
+Google MapReduce and its open-source version Hadoop provide a simple yet efficient way to handle large-scale data processing based on commodity machines.
 Over the years, Hadoop has become the de-facto benchmark\cite{hayashibara2004varphi} where users ”have instantaneous and almost unrestricted access to vast amounts of computational resources”.
-Among various design features of this framework, its simple data processing model and ease-of-use allowing even naive users who are not aware of the underlying infrastructure are able to develop programs, and this might result in "implicit" problems.
+Among various design features of this framework, its simple data processing model and ease-of-use allow even naive users who are not aware of the underlying Hadoop infrastructure are able to develop programs, and this might result in "implicit" problems.
 \par
 The reason these problems are "implicit" is because that users ignoring them will still get their MapReduce programs running and obtain final results, but during this process, many tasks may be rescheduled and restarted due to memory failures which might render execution delay and memory wastes. 
 For example, in the Linux environment TaskTrackers monitor tasks based on the following two conditions:  1) The memory usage of a specific task; 2) The total amount of memory usage of multiple tasks. When either of these two conditions is unsatisfied, TaskTracker would kill the running tasks to release memory.
@@ -9,19 +9,21 @@ When such failures happen, Hadoop would attempt to rerun these tasks until the n
 
 The above example is a common scenario where memory failures might occur, and the way that Hadoop handles such failures is simply rescheduling the failed tasks until they successfully finish or aborted, which results in delay in job processing and inappropriate memory usages.
 However, this problem can be fixed through parameter tuning in the configuration files provided to the users which is generally ignored, but this solution leads to a question: what parameters to tune and when should we do that? 
-We address this problem by describing the design and implementation of a memory usage monitoring system with the display of specific parameters, therefore users can obtain both the real-time and historical memory usage behaviors of their MapReduce jobs which can be used to illustrate the anonymous memory failures.
+We address this problem by describing the design and implementation of a memory usage monitoring system, Memmetric, with the display of specific parameters, therefore users can obtain both the real-time and historical memory usage behaviors of their MapReduce jobs which can be used to illustrate the anonymous memory failures.
 For example, if the overall memory usage of a task increases mildly but then decreases greatly in a short period of time, it implies that it is possible that there are some tasks killed and rescheduled by TaskTracker at that time.
 By comparing with the historical maximum value of memory used can the user modify the maximum memory allocation for tasks in Hadoop configuration, therefore users can improve their Hadoop program performance in a "smarter" way.
 \par
-The solution of providing both real-time and historical memory usages brings three challenges: 1). How to collect the real-time memory usage metrics from each node in a cluster? 2). How to extract the memory usage metrics of each task? 3). How to display the information to users in a straightforward way to help them improve the configuration?
+The solution of providing both real-time and historical memory usages brings three challenges: 1). How to collect the task-level real-time memory usage metrics from each node in a cluster? 2). How to make sense of the memory usage behaviors and potential memory failures they might lead? 3). How to display the information to users in a straightforward way to help them improve the configuration?
 \par
-The solutions for these three questions form three components of the Memory Failures Debugger. For the first question, we adopt Ganglia to extract the information of each node for two reasons: i. Ganglia is a real-time monitor that integrates with Hadoop; ii. The rrd adopted by Ganglia can store "fresh" data collected to avoid the overgrowth of database thus guaranteeing performance. A detailed description on Ganglia is in Section 3.
-For the second question, the default GangliaSink31 is not suitable for collecting task-level metrics, therefore some existing functions in it should be overwritten.
+The solutions for these three challenges form three primary components of this paper. For the first challenge, we adopt Ganglia to extract the information of each node for two reasons: i. Ganglia is a real-time monitor that integrates with Hadoop; ii. The rrd adopted by Ganglia can store "fresh" data collected to avoid the overgrowth of database thus guaranteeing performance. A detailed description on Ganglia is in Section 3.
+Moreover, the default GangliaSink31 is not suitable for collecting task-level metrics, therefore some existing functions in it should be overwritten.
+For the second challenge, we study three types of memory failures: Java heap size error, tasks killed by TaskMemoryManagerThread, and excessive slots.
+Studying the reasons as well as configuration associated with these types of failures can be beneficial to understanding memory failures in real-world Hadoop jobs.
 For the third question, the default web frontend displays all the metrics collected by Ganglia which renders it comprehensive but complicated. For the purpose of extracting memory usage from the huge amount of metrics, we provide a web frontend specifically displaying the memory usage metrics.
 \par
-For the purpose of better understanding the behaviors of memory allocation in Hadoop jobs, we design a set of memory allocation patterns and with the Memory Failure Debugger we are able to study different memory usage patterns that might result in memory failures, including memory usage patterns under different Hadoop configurations
+For the purpose of better understanding the behaviors of memory allocation in Hadoop jobs, we design a set of memory allocation patterns and based on the analysis results from Memmetric we are able to study different memory usage patterns that might result in memory failures, including memory usage patterns under different Hadoop configurations.
 \par
-The main contributions include:
+The main contributions of this paper include:
 \begin{itemize}
 	\setlength{\itemsep}{1pt}
 	 \setlength{\parskip}{0pt}
@@ -29,11 +31,11 @@ The main contributions include:
 	\item
 		\emph{ Establishing the monitoring system for task level memory usages for Hadoop 1.2.1.} We adopt Ganglia and construct a monitor providing both real-time and historical memory usage behaviors.
 	\item
-		\emph{ Detecting several bugs in Hadoop 1.2.1} When deploying Ganglia, we detected several bugs in Hadoop 1.2.1 which render it unable to provide task-level metrics of each Datanode.
+		\emph{ Detecting several bugs in Hadoop 1.2.1.} When deploying Ganglia, we detect several bugs in Hadoop 1.2.1 which render it unable to provide task-level metrics of each Datanode. We also provide GangliaSink32, a modified version of the default GangliaSink31 to collect task-level memory usage metrics of each node.
 	\item
-		\emph{ Providing a set of workload behaviors to study the behaviors of memory failures} \reminder{to be added.}
+		\emph{ Providing a set of workload behaviors to study the behaviors of memory failures.} We provide a set of workload Hadoop jobs to study three different types of memory failures that might happen in arbitrary Hadoop jobs.
 \end{itemize}
 
-The rest of this paper is organized as follows. Section 2 covers detailed explanation of implicit bugs and background materials related to distributed monitoring systems. Section 3 describes the design and implementation of different components of Hadoop v 1.0 Memory Failure Debugger. Section 4 describes the designed workload and experiments\reminder{need improving}. Finally, Section 5 covers some experience we learned from this project and the conclusion.
+The rest of this paper is organized as follows. Section 2 covers detailed explanation of implicit bugs and background materials related to distributed monitoring systems. Section 3 describes the design and implementation of different components of Memmetric. Section 4 describes the experiments, designed workloads and the analysis of the experiment results. Finally, Section 5 covers some experience we learned from this project and the conclusion.
 
 
