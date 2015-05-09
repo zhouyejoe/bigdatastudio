@@ -4,3 +4,4 @@
 *.out
 *.pdf
 *.aux
+*.fdb_latexmk
