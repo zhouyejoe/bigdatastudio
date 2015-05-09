@@ -1,0 +1,5 @@
+As we have mentioned in our evaluation part, Memmetric now just supports to find out the memory failure caused by the error java heap size setting and slots number setting, for the memory failure caused by the control of TaskMemoryManagerThread, we cannot get the metrics. We can add a daemon process in slave machine to get the virtual memory usage for each child process through linux/JAVA APIs, then sends out the data to Ganglia. 
+
+Memmetric has no explict graph or error message when a task fails which can be done through acessing jobtracker's http server then analyze the html data to get the running status of each task in specified job.
+
+We assume the whole architecture can be migrated and used in Hadoop Yarn, and we need to test it in Hadoop Yarn as it is more widely used than Hadoop 1.0.

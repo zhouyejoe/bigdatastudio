@@ -5,3 +5,5 @@ We found that there is a bug in the connector (GangliaSink31.java) between Hadoo
 Besides, We also found that Ganglia is not suitable for task level monitoring inherently. We added Ganglia filter to remove finished job metrics to avoid duplicated memory usage accounting.
 
 Moreover, We designed a set of workload Hadoop jobs to reproduce and study three different types of memory failures: Java Heap Size Failure, TaskMemoryManagerThread Failure, and Excessive Slots Failure. We found that Memmetric can observe Java Heap Size Failure and Excessive Slots Failure, but cannot see TaskMemoryManagerThread Failure, because Hadoop JVM metric does not report virtual memory usage.
+
+In our experience, the metrics2 system in Hadoop is efficient and convenient to customize, but there are still some bugs and unclear design. We assume this is because we are using Hadoop 1.2.1 which has been replaced by Hadoop Yarn for several years already, and such bugs are not taking too much bad effect for users. The design of TaskMemoryManagerThread in TaskTracker is too strong with memory problems as it uses virtual memory for the usage calculation, which we think it is really a bad choice.
