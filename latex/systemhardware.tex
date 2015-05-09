@@ -1,1 +1,3 @@
-In default setting of Hadoop, without setting the parameter "mapred.child.java.opt", a default setting with "-Xmx200M" will be transferred to tasktracker to use when start a child JVM for tasks. A naive Hadoop users will never modify these configurations and maybe don't 
+We deploy our system Memmetric to a cluster of three t2.small EC2 instances on Amazon Web Service (AWS), which are named as "hadooptest1", "hadooptest2" and "hadooptest3" to denote their IP addresses.
+The instance "hadooptest2" is selected as the master of the cluster and the other two are datanodes.
+For the purpose of configuring the parameters of Hadoop, we modify the "mapred-site.xml" file on each of these three nodes.

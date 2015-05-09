@@ -1,1 +1,16 @@
-In default setting of Hadoop, without setting the parameter "mapred.child.java.opt", a default setting with "-Xmx200M" will be transferred to tasktracker to use when start a child JVM for tasks. A naive Hadoop users will never modify these configurations and maybe don't 
+When the parameters are tuned in the configuration file, TaskTrackerManager is enabled. The configuration in this experiment is configured as following.
+\begin{align*}
+&{\bf mapred.child.java.opts = -Xmx700m}\\
+&{\bf mapred.cluster.map.memory.mb = 150}\\
+&{\bf mapred.cluster.reduce.memory.mb = 150}\\
+&{\bf mapred.cluster.max.map.memory.mb = 200}\\
+&{\bf mapred.cluster.max.reduce.memory.mb = 200}\\
+&{\bf mapred.job.map.memory.mb = 150}\\
+&{\bf mapred.job.reduce.memory.mb = 150}\\
+&{\bf mapred.tasktracker.map.tasks.maximum = 2}\\
+&{\bf mapred.tasktracker.reduce.tasks.maximum = 1}\\
+\end{align*}
+
+When we run this experiment, the 
+\par
+The reason that this experiment fails is because that the parameters set in this way control the virtual memory usage in the nodes, while Ganglia merely collects heap memory usage and commit memory usage, which are physical memory usage metrics of each node. 
