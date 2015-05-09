@@ -41,6 +41,10 @@ http://influxdb.com.
 http://sequenceiq.com.
 \newblock Self service hadoop platform - anywhere., 2014.
 
+\bibitem{https://hive.apache.org}
+https://hive.apache.org.
+\newblock Apache hive tm, 2011.
+
 \bibitem{http://www.cloudera.com}
 http://www.cloudera.com.
 \newblock End-to-end administration for hadoop, 2011.
