@@ -11,6 +11,6 @@ When the parameters are tuned in the configuration file, TaskTrackerManager is e
 &{\bf mapred.tasktracker.reduce.tasks.maximum = 1}\\
 \end{align*}
 
-When we run this experiment, the 
+When we run this experiment, the map task fails when it starts.
 \par
 The reason that this experiment fails is because that the parameters set in this way control the virtual memory usage in the nodes, while Ganglia merely collects heap memory usage and commit memory usage, which are physical memory usage metrics of each node. 
