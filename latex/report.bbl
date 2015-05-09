@@ -6,6 +6,12 @@ Jerome Boulon, Andy Konwinski, Runping Qi, Ariel Rabkin, Eric Yang, and Mac
 \newblock Chukwa, a large-scale monitoring system.
 \newblock In {\em Proceedings of CCA}, volume~8, pages 1--5, 2008.
 
+\bibitem{chang2008bigtable}
+Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson~C Hsieh, Deborah~A Wallach,
+  Mike Burrows, Tushar Chandra, Andrew Fikes, and Robert~E Gruber.
+\newblock Bigtable: A distributed storage system for structured data.
+\newblock {\em ACM Transactions on Computer Systems (TOCS)}, 26(2):4, 2008.
+
 \bibitem{hayashibara2004varphi}
 Naohiro Hayashibara, Xavier Defago, Rami Yared, and Takuya Katayama.
 \newblock The $\varphi$ accrual failure detector.

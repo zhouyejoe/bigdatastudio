@@ -63,25 +63,25 @@ The Gmetad process runs on the master monitoring node (may not be the master of 
 
 
 Nagios (Nagios Ain’t Goona Insist On Saintood) \cite{josephsen2007building} is an open-source monitoring system that has great freedom and flexibility. 
-The core of Nagios is concise, but it can be extended with specific plug-ins for different requirements, including plug-ins implemented by the developers.
+The core of Nagios is concise, but it can be extended with specific plug-ins for different requirements, including plug-ins implemented by the users themselves.
 These plug-ins run on distributed nodes to monitor the their status and send metrics to the core. 
 The advantages of Nagios is that it provides a bunch of alerts mechanism that can notify the administrator when there is a problem in the system.
 \par
 Chukwa\cite{boulon2008chukwa} is a subproject of Hadoop, which is a distributed log analysis monitoring system. 
-Different with Ganglia or Nagios, which are real-time monitoring systems, Chukwa is a batch log analysis system with the ability of processing large data brought by Hadoop.
+Different from Ganglia or Nagios, which are real-time monitoring systems, Chukwa is a batch log analysis system with the ability of processing large data brought by Hadoop.
 Chukwa provides a full stack solution for large scale log data including data collection, storage, analysis and dashboard display.
 Chukwa also deploys an agent running on each node to monitor metrics status on that node and the "Chukwa Collector" takes responsibility to collect these metrics data from distributed agents. 
-After classifying, sorting, de-duplicating and combining, those logs will be directly written to HDFS or HBase which can be used as the input source for MapReduce analysis jobs, then the results of the analysis are displayed through websites.
-Users can check the running status of MapReduce jobs including the running time, resource consumption, when the failure happens and where the bottleneck is of the whole pipeline which largely enriches the monitoring functionality.
+After classifying, sorting, de-duplicating and combining, those logs will be directly written to HDFS or HBase (the open-source version of Google Big Table\cite{chang2008bigtable}) which can be used as the input source for MapReduce analysis jobs, then the results of the analysis are displayed through websites.
+Users can check the running status of MapReduce jobs including the running time, resource consumption, when the failure happens and where the bottleneck is of the whole pipeline which largely enrich the monitoring functionality.
 \par
-SequenceIQ\cite{http://sequenceiq.com} is a real-time distributed monitoring system built directly atop InfluxDB and Grafana which provides comprehensive analysis on various metrics such as CPU, memory, network usage, etc..
-InfluxDB\cite{http://influxdb.com} is a time series, metrics and analytics distributed database that can be used as part of the monitoring system due to its specific design for storing metrics data and support for abundant SQL query for analysis.
-Each node in the cluster can insert metrics data into InfluxDB, users do not need to care about the distributed message and data transferring; instead they just need to use database functions to update the metrics.
+SequenceIQ\cite{http://sequenceiq.com} is a real-time distributed monitoring system built directly atop InfluxDB and Grafana which provides comprehensive analysis on various metrics such as CPU, memory, network usage, etc.
+InfluxDB\cite{http://influxdb.com} is a time series, metrics and analytics distributed database that can be used as part of the monitoring system due to its specific design for storing metrics data and support for abundant SQL queries for analysis.
+Each node in the cluster can insert metrics data into InfluxDB, users do not need to care about the distributed messages and data transferring; instead they just need to use database functions to update the metrics.
 Grafana\cite{http://grafana.org} is a well-designed and easy-to-use website development tool which integrates dashboards with analytics. Grafana provides rich graphing, mixed styling which render it a powerful frontend analysis tool.
 \par
 
-Cloudera Manager\cite{http://www.cloudera.com} is the first and most sophisticated commercial management application for Hadoop clusters in the industry. 
-It is designed to make the administration of enterprise data hub at any scale simple and straightforward, which provides users cluster-wide, real-time views of nodes/jobs running status, incorporating a full range of reporting and diagnostic tools to help user optimize performance.
+Cloudera Manager\cite{http://www.cloudera.com} is the first job management application for Hadoop clusters in the industry, which is also a commercial product.
+It is designed to make the administration of enterprise data hub at any scale simple and straightforward, which provides users cluster-wide, real-time views of nodes/jobs running status, incorporating a full range of reporting and diagnostic tools to help users optimize the Hadoop job performance.
 
 Ambri\cite{http://hortonworks.com/hadoop/ambari} developed by Hortonworks is an open-source version of Cloudera Manager which can be used to monitor the status of Hadoop jobs.
 Ambri adopts Ganglia to collect metrics and Nagios to support the alert system, based on which users can check the status of Hadoop core as well as HBase and Hive.
