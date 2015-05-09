@@ -1,5 +1,5 @@
 \subsection{Implicit Bugs}
-In this paper, we study three cases of memory failures: Java heap size error, tasks killed by TaskMemoryManagerThread, and excessive slots.
+In this paper, we study three cases of memory failures: Java heap size errors, tasks killed by TaskMemoryManagerThread, and excessive slots.
 \subsubsection{Java Heap Size Failure}
 Without modifying the configuration files Hadoop would run with default setting where most memory-related parameters are set as -1, and in this case only the memory sizes of java virtual machines (JVM) limit the memory that tasks can consume.
 The JVM memory consists of three parts as displayed in Figure\ref{ref:heap_structure}.

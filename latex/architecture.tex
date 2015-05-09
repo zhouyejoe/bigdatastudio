@@ -5,19 +5,17 @@
     \label{ref:architecture}
 \end{figure*}
 
-Figure \ref{ref:architecture} shows our system design. It contains three main components: \textbf{Ganglia}, \textbf{Hadoop metric system}, and \textbf{Memmetric}. We used Ganglia 3.6.0 as the infrastructure to gather the  Hadoop cluster metrics in real-time. Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, they will be organized and visualized to users by our frontend system: Memmetric.
+Figure \ref{ref:architecture} shows our system design. It contains three main components: \textbf{Ganglia}, \textbf{Hadoop metric system}, and \textbf{Memmetric}. We used Ganglia 3.6.0 as the infrastructure to gather the  Hadoop cluster metrics in real-time. Each node in the Hadoop cluster periodically reports its information to Ganglia daemon. After Ganglia collecting the metric information, it will be organized and visualized to users through the frontend of Memmetric.
 
 \subsection{Ganglia}
 
-Ganglia deploys daemons on each node, called as gmond. Gmond in a worker node is responsible to collect monitoring statistics of a machine (e.g., CPU load, memory usage, disk load), and report those metrics to the gmond on the server node. 
+Ganglia deploys a daemon on each node in the cluster called Gmond. Gmond in a worker node is responsible for collecting monitoring statistics of a machine (\emph{e.g.}, CPU load, memory usage, disk load), and reporting these metrics to the Gmond on the master node. 
 
-Other programs also can send its metrics to the gmond in the same machine, and then the metrics will be aggregated by Ganglia system. In our system, we set Hadoop cluster to send Java Virtual Machine (JVM) metric, which includes task level memory usage information to gmond.
+Other programs can also send their metrics to the Gmond in the same machine, and then the metrics will be aggregated by Ganglia system. In Memmetric, we deploy Hadoop cluster to send JVM metric which includes task level memory usage information to Gmond.
 
-Gmetad polls the metrics from the gmond on the server node, and stores the information into round robin database (rrd) periodically. Besides, Ganglia periodically compass old metric values in rrd, which can prevent rrd waste too much disk space to store less used old metric values.
+Gmetad polls the metrics from the Gmond on the master node, and stores the information into round robin database (rrd) periodically. In addition, Ganglia periodically compasses old metric values in rrd, thus avoiding rrd wasting too much disk space to store less-used or antiquated metrics.
 
-Ganglia provides a web interface called ganglia-web, which can plots the metrics in rrds in the form of charts or json. 
-
-We used ganglia-web as API server. Our frontend system queries ganglia-web for the information we needed, organize them, and visualize those information. 
+Ganglia provides a web interface called ganglia-web, which can plots the metrics in rrds in the form of charts or json. Memmetric queries ganglia-web for the information we needed, organizes them, and visualizes these information. 
 
 \subsubsection{Ganglia Filter}
 
@@ -28,11 +26,9 @@ We used ganglia-web as API server. Our frontend system queries ganglia-web for t
     \label{ref:gangliah_bug}
 \end{figure}
 
-We found that Ganglia keeps to report finished task's metric as the last value it received because Ganglia does not discard received metrics in default. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a Hadoop job. There should be only four map tasks running after 22:35 because we set two map task slots for a machine, but there are six lines of memory usage. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM, light blue line) has finished at 22:29, but the metric value is not set to zero.
+During the process of the deployment of Memmetric, we find that Ganglia keeps reporting finished tasks' metrics as the last values it receives because that Ganglia does not discard received metrics automatically. For example, Figure \ref{ref:gangliah_bug} shows the heap memory usage of tasks in a regular Hadoop job. Presumably, there should be only four map tasks running after 22:35 because we set two map task slots for a machine; however, it turns out that there are six lines of memory usage. The task(jvm.metrics. jvm\_201505072223\_0001\_m\_-296954387. memHeapUsedM, light blue line) finished at 22:29, but the metric value remains.
 
-It makes the reported memory usage in a machine unreasonably large because the finished task memory usages are all counted into the sum of memory usage.
-
-One solution is to set the discard time d\_max. When a metric is not reported to Ganglia over d\_max time, Ganglia will assume the metric is dead and discard it. However, the value of discarded metrics is not set as zero, but it becomes invisible from Ganglia web-interface, which means that our frontend cannot plot any metrics before d\_max and cannot provide history memory usage information to users. It becomes a dilemma: if d\_max is set to a small number, the finished task metric will be discarded and it will not be counted into the sum of memory usage, but it becomes invisible from the frontend. If d\_max is a large number, the finished task information can retain for longer time, but its value is not set to zero and confuses the sum of total memory usage.
+This behavior in Ganglia renders the reported memory usage in a machine unreasonably large because the finished task memory usages are all counted into the sum of total memory usage. One solution to this problem is to tune the parameter "delete time" d\_max: When metric is not sent to Ganglia over d\_max time, Ganglia will assume the metric is dead and discard it. However, the value of discarded metrics is not set as zero, but it becomes invisible from Ganglia web-interface, which means that our frontend cannot plot any metrics before d\_max and cannot provide history memory usage information to users. It becomes a dilemma: if d\_max is set to a small number, the finished task metric will be discarded and it will not be counted into the sum of memory usage, but it becomes invisible from the frontend. If d\_max is a large number, the finished task information can retain for longer time, but its value is not set to zero and confuses the sum of total memory usage.
 
 Instead of modifying d\_max, we added a filter inside the Ganglia API server to clean the metrics of finished tasks. If one metric is continual reported as same value over a tolerated period $T$ from time t\_end, the filter will assume the task finishes at t\_end and set the value of the metric after t\_end. 
 
