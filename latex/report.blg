@@ -15,45 +15,47 @@ Warning--entry type for "http://hortonworks.com/hadoop/ambari" isn't style-file 
 --line 268 of file references-bibtex.bib
 Warning--entry type for "http://data.linkedin.com/opensource/white-elephant" isn't style-file defined
 --line 281 of file references-bibtex.bib
-You've used 11 entries,
+Warning--entry type for "https://hive.apache.org" isn't style-file defined
+--line 294 of file references-bibtex.bib
+You've used 12 entries,
             2118 wiz_defined-function locations,
-            546 strings with 5545 characters,
-and the built_in function-call counts, 3275 in all, are:
-= -- 294
-> -- 171
+            548 strings with 5582 characters,
+and the built_in function-call counts, 3472 in all, are:
+= -- 311
+> -- 178
 < -- 3
-+ -- 74
-- -- 58
-* -- 197
-:= -- 545
-add.period$ -- 28
-call.type$ -- 11
-change.case$ -- 61
++ -- 77
+- -- 60
+* -- 203
+:= -- 577
+add.period$ -- 30
+call.type$ -- 12
+change.case$ -- 65
 chr.to.int$ -- 0
-cite$ -- 11
-duplicate$ -- 116
-empty$ -- 276
-format.name$ -- 58
-if$ -- 686
+cite$ -- 12
+duplicate$ -- 123
+empty$ -- 298
+format.name$ -- 60
+if$ -- 729
 int.to.chr$ -- 0
-int.to.str$ -- 11
+int.to.str$ -- 12
 missing$ -- 6
-newline$ -- 52
-num.names$ -- 22
-pop$ -- 97
+newline$ -- 56
+num.names$ -- 24
+pop$ -- 106
 preamble$ -- 1
-purify$ -- 51
+purify$ -- 54
 quote$ -- 0
-skip$ -- 97
+skip$ -- 105
 stack$ -- 0
-substring$ -- 128
-swap$ -- 26
+substring$ -- 133
+swap$ -- 27
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 42
+type$ -- 46
 warning$ -- 0
-while$ -- 31
-width$ -- 13
-write$ -- 106
-(There were 6 warnings)
+while$ -- 33
+width$ -- 14
+write$ -- 114
+(There were 7 warnings)
