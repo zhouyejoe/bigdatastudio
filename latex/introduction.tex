@@ -18,7 +18,7 @@ The solution of providing both real-time and historical memory usages brings thr
 The solutions for these three challenges form three primary components of this paper. For the first challenge, we adopt Ganglia to extract the information of each node for two reasons: i. Ganglia is a real-time monitor that integrates with Hadoop; ii. Round Rubin Database (rrd) adopted by Ganglia can compass old data to avoid the overgrowth of database thus guaranteeing performance. A detailed description on Ganglia is in Section 3.
 Moreover, the default GangliaSink31 is not suitable for collecting task-level metrics, therefore some existing functions in it should be overwritten.
 For the second challenge, we study three types of memory failures: Java heap size error, tasks killed by TaskMemoryManagerThread, and excessive slots.
-Based on that, we designed a set of workloads that might lead to memory failures which can happen in real-world Hadoop jobs.
+Based on that, we design a set of workloads that might lead to memory failures which can happen in real-world Hadoop jobs.
 For the third question, the default web frontend displays all the metrics collected by Ganglia which renders it comprehensive but complicated. For the purpose of extracting memory usage from the huge amount of metrics, we provide a web frontend specifically displaying the memory usage metrics.
 \par
 For the purpose of better understanding the behaviors of memory allocation in Hadoop jobs, we design a set of memory allocation patterns and based on the analysis results from Memmetric we are able to study different memory usage patterns that might result in memory failures, including memory usage patterns under different Hadoop configurations.
